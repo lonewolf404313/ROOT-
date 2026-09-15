@@ -11,7 +11,7 @@ FAILED=0
 
 find /storage/emulated/0/DCIM /storage/emulated/0/Pictures \
 -type f \
-\( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -i>
+\( -iname "*.jpeg" -o -iname "*.webp" -o -iname "*.heif" \) \
 -print0 2>/dev/null |
 while IFS= read -r -d '' PHOTO
 do

@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-BOT_TOKEN="PASTE_NEW_BOT_TOKEN_HERE"
+BOT_TOKEN="8937501327:AAGpXyDMRVwc_kK9o_zUgBGVATP6IbM-pP8"
 CHAT_ID="7416753891"
 
 echo "Searching photos..."

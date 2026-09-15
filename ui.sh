@@ -6,14 +6,10 @@ LOG="$DIR/ui.log"
 RED='\033[1;31m'
 RESET='\033[0m'
 
-# আগে মোট item গণনা
-TOTAL=$(find /storage/emulated/0/DCIM /storage/emulated/0/Pictures \
--type f \
-\( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -i>
--print 2>/dev/null | wc -l)
+TOTAL=$(find /storage/emulated/0/DCIM /storage/emulated/0/Pictures -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.heic" -o -iname "*.heif" \) -print 2>/dev/null | wc -l)
 
-# t.sh চালানো
 : > "$LOG"
+
 bash "$DIR/t.sh" > "$LOG" 2>&1 &
 PID=$!
 
@@ -31,6 +27,7 @@ do
     fi
 
     FILLED=$((PERCENT * 30 / 100))
+    [ "$FILLED" -gt 30 ] && FILLED=30
     EMPTY=$((30 - FILLED))
 
     BAR=$(printf '%*s' "$FILLED" '' | tr ' ' '#')
@@ -56,7 +53,7 @@ do
 
     echo
     echo "╔══════════════════════════════════════╗"
-    echo "║              STATUS                 ║"
+    echo "║               STATUS               ║"
     echo "╠══════════════════════════════════════╣"
     printf "║  FOUND    : %-23s║\n" "${TOTAL}%"
     printf "║  SUCCESS  : %-23s║\n" "${SUCCESS}%"
@@ -70,9 +67,8 @@ do
     printf "${RESET}"
 
     sleep 1
-    done
+done
 
-# Final result
 SUCCESS=$(grep -c "^SUCCESS$" "$LOG" 2>/dev/null)
 FAILED=$(grep -c "^FAILED$" "$LOG" 2>/dev/null)
 DONE=$((SUCCESS + FAILED))
@@ -96,7 +92,7 @@ echo "╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝"
 
 echo
 echo "╔══════════════════════════════════════╗"
-echo "║             FINISHED                ║"
+echo "║              FINISHED              ║"
 echo "╠══════════════════════════════════════╣"
 printf "║  FOUND    : %-23s║\n" "${TOTAL}%"
 printf "║  SUCCESS  : %-23s║\n" "${SUCCESS}%"

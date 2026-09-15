@@ -5,39 +5,36 @@ CHAT_ID="7416753891"
 
 echo "Searching photos..."
 
+COUNT=0
+SENT=0
+FAILED=0
+
 find /storage/emulated/0/DCIM /storage/emulated/0/Pictures \
 -type f \
-\( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -iname "*.heic" -o -iname "*.heif" \) \
--not -path "*/.backup/*" \
+\( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.webp" -o -i>
 -print0 2>/dev/null |
 while IFS= read -r -d '' PHOTO
 do
-    echo "Sending: $PHOTO"
+    COUNT=$((COUNT + 1))
 
-    SUCCESS=0
+    echo
+    echo "[$COUNT] Sending:"
+    echo "$PHOTO"
 
-    for RETRY in 1 2 3
-    do
-        RESPONSE=$(curl -sS --connect-timeout 10 --max-time 120 \
-            -X POST \
-            "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
-            -F "chat_id=${CHAT_ID}" \
-            -F "document=@${PHOTO}")
+    RESPONSE=$(curl -sS \
+        -X POST \
+        "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
+        -F "chat_id=${CHAT_ID}" \
+        -F "document=@${PHOTO}")
 
-        if echo "$RESPONSE" | grep -q '"ok":true'
-        then
-            echo "SUCCESS"
-            SUCCESS=1
-            break
-        fi
-
-        echo "Retry $RETRY..."
-        sleep 1
-    done
-
-    if [ "$SUCCESS" -eq 0 ]
+    if echo "$RESPONSE" | grep -q '"ok":true'
     then
-        echo "FAILED: $PHOTO"
+        echo "SUCCESS"
+        SENT=$((SENT + 1))
+    else
+        echo "FAILED"
+        echo "$RESPONSE"
+        FAILED=$((FAILED + 1))
     fi
 done
 
